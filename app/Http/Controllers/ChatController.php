@@ -6,30 +6,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Events\MessageSent;
+use App\Events\ChatEvent;
 
-class MessagesController extends Controller
+class ChatController extends Controller
 {
+
+    private function baseQuery()
+    {
+        return DB::table('chats')->select('id', 'sender_id', 'receiver_id', 'group_id', 'message', 'created_at');
+    }
+
     public function send(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:255',
-            'receiver_id' => 'nullable|integer',
-            'group_id' => 'nullable|integer'
+            'message'       => 'required|string|max:255',
+            'receiver_id'   => 'nullable|integer',
+            'group_id'      =>   'nullable|integer'
         ]);
 
-        $message_id = DB::table('messages')->insertGetId([
-            'sender_id' => Auth::user()->id,
-            'receiver_id' => $request->receiver_id,
-            'group_id' => $request->group_id,
-            'message' => $request->message
+        $message_id = $this->baseQuery()->insertGetId([
+            'sender_id'     => Auth::user()->id,
+            'receiver_id'   => $request->receiver_id,
+            'group_id'      => $request->group_id,
+            'message'       => $request->message
         ]);
 
-        $message = DB::table('messages')->find($message_id);
+        $message = $this->baseQuery()->find($message_id);
         
-        broadcast(new MessageSent($message))->toOthers();
-
-        // MessageSent::dispatch($message);
+        broadcast(new ChatEvent($message))->toOthers();
 
         return Response::json([
             'message' => $message
@@ -38,7 +42,7 @@ class MessagesController extends Controller
 
     public function chat(string $receiver_id)
     {
-        $messages = DB::table('messages')
+        $messages = $this->baseQuery()
             ->where([
                 ['sender_id', Auth::user()->id],
                 ['receiver_id', $receiver_id]

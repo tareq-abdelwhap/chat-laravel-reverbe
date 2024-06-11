@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        broadcast(new OnlineStatus($user, 'online'));
+        broadcast(new OnlineStatus($user));
 
         return response()->noContent();
     }

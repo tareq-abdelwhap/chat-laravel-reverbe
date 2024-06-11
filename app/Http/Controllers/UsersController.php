@@ -12,9 +12,9 @@ class UsersController extends Controller
     public function index()
     {
         $users = DB::table('users')
-        ->select('id', 'name', 'email')
-        ->whereNot('id', Auth::user()->id)
-        ->get();
+            ->select('id', 'name', 'email')
+            ->whereNot('id', Auth::user()->id)
+            ->get();
         return Response::json([
             'users' => $users
         ]);

@@ -20,7 +20,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        broadcast(new OnlineStatus($request->user(), 'online'));
+        broadcast(new OnlineStatus($request->user()));
 
         return response()->noContent();
     }
@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        broadcast(new OnlineStatus($request->user(), 'offline'));
+        broadcast(new OnlineStatus($request->user()));
 
         return response()->noContent();
     }
