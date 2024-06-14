@@ -6,6 +6,7 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Support\Facades\Auth;
 
 class OnlineStatus implements ShouldBroadcastNow 
 {
@@ -24,4 +25,5 @@ class OnlineStatus implements ShouldBroadcastNow
     {
         return ['user' => $this->user];
     }
+
 }
